@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Nom Pusheen</title>
+  <style>
+@import url('https://fonts.googleapis.com/css?family=Bungee');
+</style>
+  <style type="text/css">
+    *{
+      padding: 0px;
+      margin: 0px;
+    }
+    .row{
+      line-height: 0;
+    }
+    .wall {
+      background-color: #ffb4c9;
+      height: 50px;
+      width: 50px;
+      display: inline-block;
+      padding: 0px;
+      margin: 0px;
+    }
+    .blank {
+      background-color: white;
+      height: 50px;
+      width: 50px;
+      display: inline-block;
+    }
+    .donut {
+      background-color: black;
+      height: 50px;
+      width: 50px;
+      display: inline-block;
+      background-image: url('donut.png');
+      background-size: contain;
+    }
+    .starbucks {
+      background-color: white;
+      height: 50px;
+      width: 50px;
+      display: inline-block;
+      background-image: url('starbucks.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    #pusheen{
+      background-color: black;
+      height: 50px;
+      width: 50px;
+      display: inline-block;
+      background-image: url('pusheen.png');
+      background-size: contain;
+      position: absolute;
+      top: 50px;
+      left: 50px;
+    }
+    #score-counter {
+      width:220px;
+      height:30px;
+      border: solid white;
+      position: absolute;
+      left: 120px;
+      top: 6px;
+      text-align: center;
+      border-radius: 10px;
+      /* background-image: url('sprinkles.png');
+      background-size: 95%; */
+      font-family: 'Bungee';
+      color: #63b5e3;
+      font-size: 1.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="world"></div>
+  <div id="pusheen"></div>
+  <div id="score-counter">START!</div>
+</body>
+
+<script type="text/javascript">
+//---------------------WORLD VARIABLE-----------------------------
+var world = [
+  [1,1,1,1,1,1,1,1,1],
+  [1,0,2,0,1,0,2,3,1],
+  [1,2,1,2,1,2,1,2,1],
+  [1,3,2,0,2,0,2,0,1],
+  [1,2,1,2,1,3,1,2,1],
+  [1,0,1,0,1,0,1,0,1],
+  [1,2,0,2,0,2,0,2,1],
+  [1,0,1,0,1,0,1,0,1],
+  [1,3,0,2,0,2,3,2,1],
+  [1,1,1,1,1,1,1,1,1]
+];
+var worldDict = {
+  0: "blank",
+  1: "wall",
+  2: "donut",
+  3: "starbucks"
+}
+//---------------------DRAW THE WORLD------------------------------
+function drawWorld() {
+  output = "";
+
+  for (var row = 0; row < world.length; row++) {
+    output += "<div class='row'>"
+    for(var x = 0; x < world[row].length; x++) {
+      output += "<div class='"+ worldDict[world[row][x]] +"'></div>"
+    }
+    output += "</div>"
+  }
+  document.getElementById('world').innerHTML = output; //will be the divs for creating the rows
+}
+//---------------------MOVE THE KITTEH-----------------------------
+    //-----------------and keep score!-----------------------------
+function movePusheen(e) {
+  score = 0;
+  var coordinates = {
+    x: 1,
+    y: 1
+  };
+
+  function drawPusheen() {
+    document.getElementById('pusheen').style.top = coordinates.y * 50 + 'px';
+    document.getElementById('pusheen').style.left = coordinates.x * 50 + 'px';
+  }
+  drawPusheen();
+
+  function points() {
+    if(world[coordinates.y][coordinates.x] == 2) {
+      score = score + 10;
+    } else if (world[coordinates.y][coordinates.x] == 3) {
+      score = score + 25;
+    }
+  }
+      //Below will let you move the kitten and get points
+  document.onkeydown = function(e) {
+    console.log(e.keyCode, "Y:" + coordinates.y + " X:" + coordinates.x, "Score " + score);
+    if (e.keyCode == 37) { // LEFT
+      if(world[coordinates.y][coordinates.x-1] != 1){
+        coordinates.x--;
+        points();
+      }
+    } else if (e.keyCode == 39) { // RIGHT
+      if (world[coordinates.y][coordinates.x+1] != 1){
+        coordinates.x++;
+        points();
+      }
+    } else if (e.keyCode == 38) { // UP
+      if (world[coordinates.y-1][coordinates.x] != 1){
+        coordinates.y--;
+        points();
+      }
+    } else if (e.keyCode == 40) { // DOWN
+      if (world[coordinates.y+1][coordinates.x] != 1) {
+        coordinates.y++;
+        points();
+      }
+    } //Below will allow you to "eat" the donuts and re-draw the world
+    world[coordinates.y][coordinates.x] = 0;
+    document.getElementById('score-counter').innerHTML = "Score: " + score;
+    drawWorld();
+    drawPusheen();
+  }
+}
+drawWorld();
+movePusheen();
+
+</script>
+
+</html>
